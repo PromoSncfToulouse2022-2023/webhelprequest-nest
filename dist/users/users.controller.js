@@ -18,6 +18,8 @@ const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const argon2 = require("argon2");
+const swagger_1 = require("@nestjs/swagger");
+const user_entity_1 = require("./entities/user.entity");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -39,6 +41,11 @@ let UsersController = class UsersController {
 };
 __decorate([
     (0, common_1.Post)('/register'),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'foiré.' }),
+    (0, swagger_1.ApiCreatedResponse)({
+        description: 'The record has been successfully created.',
+        type: user_entity_1.User,
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),

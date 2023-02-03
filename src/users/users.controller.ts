@@ -3,6 +3,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as argon2 from "argon2";
+import { ApiCreatedResponse, ApiResponse } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController
@@ -11,6 +13,11 @@ export class UsersController
     { }
 
     @Post('/register')
+    @ApiResponse({ status: 201, description: 'foiré.' })
+    @ApiCreatedResponse({
+        description: 'The record has been successfully created.',
+        type: User,
+      })
     async create(@Body() createUserDto: CreateUserDto)
     {
         const hash = await argon2.hash(createUserDto.password);

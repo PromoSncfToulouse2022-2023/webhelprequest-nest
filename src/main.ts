@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './errors/http-exception.filter';
 import helmet from 'helmet';
+import { ConfigModule } from '@nestjs/config';
+import { env } from 'process';
 
 async function bootstrap() 
 {
@@ -20,7 +22,8 @@ async function bootstrap()
     SwaggerModule.setup('api', app, document);
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalFilters(new HttpExceptionFilter())
-    await app.listen(3000);
+    ConfigModule.forRoot()
+    await app.listen(process.env.PORT || 3000);
     console.log('Server started at http://localhost:3000');
 }
 bootstrap();

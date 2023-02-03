@@ -6,6 +6,7 @@ const swagger_1 = require("@nestjs/swagger");
 const app_module_1 = require("./app.module");
 const http_exception_filter_1 = require("./errors/http-exception.filter");
 const helmet_1 = require("helmet");
+const config_1 = require("@nestjs/config");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use((0, helmet_1.default)());
@@ -20,7 +21,8 @@ async function bootstrap() {
     swagger_1.SwaggerModule.setup('api', app, document);
     app.useGlobalPipes(new common_1.ValidationPipe());
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
-    await app.listen(3000);
+    config_1.ConfigModule.forRoot();
+    await app.listen(process.env.PORT || 3000);
     console.log('Server started at http://localhost:3000');
 }
 bootstrap();
