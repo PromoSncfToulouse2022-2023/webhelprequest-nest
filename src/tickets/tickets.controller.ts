@@ -10,6 +10,7 @@ import
     UsePipes,
     ValidationPipe,
     UseGuards,
+    Request,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -25,7 +26,7 @@ export class TicketsController
     @UseGuards(JwtAuthGuard)
     @Post()
     @UsePipes(new ValidationPipe({ transform: true }))
-    async create(@Body() createTicketDto: CreateTicketDto) 
+    async create(@Body() createTicketDto) 
     {
         return await this.ticketsService.create(createTicketDto);
     }
