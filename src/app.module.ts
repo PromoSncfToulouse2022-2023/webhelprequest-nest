@@ -21,7 +21,7 @@ import { AuthModule } from './auth/auth.module';
             database: process.env.DB_NAME,
             entities: [join(__dirname, '**', '*.entity.{ts,js}')],
             synchronize: true,
-            logging: true,
+            logging: false,
         }),
         TicketsModule,
         UsersModule,
