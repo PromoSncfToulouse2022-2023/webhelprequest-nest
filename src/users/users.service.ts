@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -8,31 +7,75 @@ export class UsersService
 {
     create(createUserDto: CreateUserDto) 
     {
-        return User.create({...createUserDto}).save();
+        try
+        {
+            return User.create({ ...createUserDto }).save();
+        } 
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
-
-    findAll() 
-    {
-        return `This action returns all users`;
-    }
-
+    
     async findOneById(id: number) 
     {
-        return await User.findOneBy({id});
+        try
+        {
+            return await User.findOneBy({ id });
+        } 
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
 
     async findOneByUsername(username: string) 
     {
-        return await User.findOneBy({username});
+        try
+        {
+            return await User.findOneBy({ username });
+        } 
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) 
+    async remove(id: number) 
     {
-        return `This action updates a #${id} user`;
+        try
+        {
+            const user = await this.findOneById(id);
+
+            if (user)
+            {
+                return await user.remove();
+            }
+
+            return null;
+        } 
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
 
-    remove(id: number) 
+    async profile(id: number) 
     {
-        return `This action removes a #${id} user`;
+        try
+        {
+            return await User.findOne({
+                where: {
+                    id: id
+                },
+                relations: {
+                    tickets: true
+                }
+            });
+        } 
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
 }

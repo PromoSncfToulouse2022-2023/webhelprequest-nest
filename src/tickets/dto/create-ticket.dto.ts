@@ -3,7 +3,7 @@ import { IsNotEmpty } from "class-validator";
 
 export class CreateTicketDto 
 {
-    @ApiProperty()
     @IsNotEmpty()
+    @ApiProperty()
     message: string;
 }

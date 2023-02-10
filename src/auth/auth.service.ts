@@ -1,7 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as argon2 from "argon2";
+import { User } from '../users/entities/user.entity';
 
 
 @Injectable()
@@ -12,33 +13,39 @@ export class AuthService
         private jwtService: JwtService
     ) { }
 
-    async validateUser(username: string, password: string): Promise<any>
+    async validateUser(username: string, pass: string): Promise<Partial<User>>
     {
-        const user = await this.usersService.findOneByUsername(username);
-
-        if (!user)
+        try
         {
-            throw new ForbiddenException('No user with this name');
-        }
+            const user = await this.usersService.findOneByUsername(username);
 
-        const isPasswordVerified = await argon2.verify(user.password, password);
+            if (!user) throw new ForbiddenException('No user with this name');
 
-        if (isPasswordVerified)
-        {
+            const isPasswordVerified = await argon2.verify(user.password, pass);
+
+            if (!isPasswordVerified) throw new ForbiddenException('Incorrect password');
+
             const { password, ...result } = user;
+
             return result;
         }
-        else
+        catch (error)
         {
-            throw new ForbiddenException('Incorrect password');
+            throw new InternalServerErrorException();
         }
     }
 
     async login(user: any)
     {
-        const payload = { username: user.username, userId: user.id };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
+        try
+        {
+            const payload = { username: user.username, userId: user.id };
+
+            return { access_token: this.jwtService.sign(payload) };
+        }
+        catch (error)
+        {
+            throw new InternalServerErrorException();
+        }
     }
 }
